@@ -1,9 +1,15 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import CytoscapeComponent from 'react-cytoscapejs';
+//import { JsonEditor } from 'rc-json-editor';
+import Input from "../components/InputComponent/Input";
 
-export default function Home() {
+export default function Home({data}) {
+  console.log(data);
+  
   return (
+    
     <div className={styles.container}>
       <Head>
         <title>Create Next App</title>
@@ -11,45 +17,20 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+    
+
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+      <h1>ProofVisualization</h1>
+      <Input/>
+      
+      
+      <CytoscapeComponent 
+          elements={[
+            { data: { id: 'one', label: 'Node 1' }, position: { x: 30, y: 100 } },
+            { data: { id: 'two', label: 'Node 2' }, position: { x: 100, y: 100 } },
+            { data: { source: 'one', target: 'two', label: 'Edge from Node1 to Node2' } }]}                
+          style={{ width: '600px', height: '600px' }}/>  
       </main>
 
       <footer className={styles.footer}>
@@ -67,3 +48,16 @@ export default function Home() {
     </div>
   )
 }
+
+/* export const getStaticProps = async () => {
+  const res = await fetch(
+    `http://localhost:3000/api/form`
+  );
+  const data = await res.json();
+
+  return {
+    props: {
+      data,
+    },
+  };
+}; */
