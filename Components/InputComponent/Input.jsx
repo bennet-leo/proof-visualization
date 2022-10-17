@@ -25,12 +25,14 @@ const Input = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault(); //will stop the refreshing of the page
+    //wenn Text input und Farbwahl getroffen, setze state auf valid und submitte
     if(values.textInput && values.radioButtonColor) {
       setValid(true);
   }
     setSubmitted(true);
   };
-  console.log(`state: ${values.textInput}, ${values.radioButtonColor}`);
+
+  //console.log(`state: ${values.textInput}, ${values.radioButtonColor}`);
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -76,6 +78,7 @@ const Input = () => {
 
         <button type="submit">submit row</button>
       </form>
+      {submitted && !values.radioButtonColor && <div>Please chose a color!</div>}
       {valid && submitted && <div>Success! Thank you for registering</div>}
     </div>
   );

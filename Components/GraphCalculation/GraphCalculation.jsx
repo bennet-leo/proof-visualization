@@ -3,13 +3,10 @@ import CytoscapeComponent from "react-cytoscapejs";
 import { DataContext } from "../../pages";
 
 const GraphCalculation = () => {
-  
-  function Data() {
-    const value = React.useContext(UserContext);  
-      
-    return <h1>{value}</h1>;
-  }
 
+  const {values} = React.useContext(DataContext);  
+  //auswerten der Daten
+  //bauen des elements Objects
   return (
     <div>
       GraphCalculation
