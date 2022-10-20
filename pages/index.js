@@ -13,8 +13,8 @@ export default function Home({}) {
   
   //data object, provided by React context for the other components to consume during runtime
   const [values, setValues] = useState({
-    textInput: "Heap Chunk",
-    radioButtonColor: "black",
+    textInput: '',
+    radioButtonColor: '',
   });
 
   return (

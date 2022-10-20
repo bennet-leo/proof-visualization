@@ -1,10 +1,11 @@
+import styles from "./graphCalculation.module.scss"
 import React from "react";
 import CytoscapeComponent from "react-cytoscapejs";
 import { DataContext } from "../../pages";
-import cytoscape from 'cytoscape';
-import dagre from 'cytoscape-dagre';
+import cytoscape from "cytoscape";
+import dagre from "cytoscape-dagre";
 
-cytoscape.use( dagre );
+cytoscape.use(dagre);
 
 
 const GraphCalculation = () => {
@@ -16,12 +17,12 @@ const GraphCalculation = () => {
   //holds the data points grouped by nodes and edges = not flattened
   const elements = {
     nodes: [],
-    edges: []
-  }
-
+    edges: [],
+  };
+  const textoutput = [];
   //holds the graph data objects without nodes and edges grouping
   //like so: {data: {id: 'one', name:'lala' ...}}, {data: {id: 'two, source: 'one', target: 'x'}}
-  const elementsFlat = []
+  const elementsFlat = [];
 
   //data object for intializing data for nodes to draw in graph
   const dataFactoryNodes = () => {
@@ -32,10 +33,10 @@ const GraphCalculation = () => {
         shape: "",
         bordercolor: "",
         parent: "",
-      }
+      },
     };
   };
-  //data object for intializing data for edges to draw in graph 
+  //data object for intializing data for edges to draw in graph
   const dataFactoryEdges = () => {
     return {
       data: {
@@ -44,10 +45,9 @@ const GraphCalculation = () => {
         source: "",
         target: "",
         color: "",
-      }
+      },
     };
   };
-
 
   const createMallocBlockStackGraphData = (name) => {
     //datapoints for outer rectangle
@@ -87,41 +87,28 @@ const GraphCalculation = () => {
 
     elements.nodes.push(mallocNode);
     elements.nodes.push(node);
-  }
+  };
 
   //pull out entered name of heap chunk by the user to later determine label in graph and call create-Function to satisfy the different types of heap chunks
   const checkTypeOfHeapChunk = () => {
+    textoutput.push(text);
+    console.log(textoutput);
     if (text.startsWith("malloc_block_stack")) {
       const name = text.substring(19, 20);
       createMallocBlockStackGraphData(name);
-    }else if (text.startsWith("malloc_block_node")) {
+    } else if (text.startsWith("malloc_block_node")) {
       const name = text.substring(18, 19);
       createMallocBlockNodeGraphData(name);
     }
     //else if textinput startswith malloc_block_node
     //else if textinput starts with node
     //else if textinput starts with stack
+    //when submitted flaten the array and push in elementsFlat
+    elements.nodes.forEach((x) => elementsFlat.push(x));
   };
-
+  
   checkTypeOfHeapChunk();
-  //when submitted flaten the array and push in elementsFlat
-  elements.nodes.forEach(x=>elementsFlat.push(x));
-  /* 
-  1. malloc, stack oder node ?
-    1.1 malloc: malloc_block_stack oder malloc_block_node?
-      1.1.1 malloc_block_stack: store the string out of () in variable name
-              create malloc_block_stack(x)
-                generateNodeId() -> fortlaufend: const id = Date.now();
-                createNode(name)
-                {data: {id: 'auto', name: 'malloc_block_stack(x), shape: 'rectangle', bordercolor: 'color'}},
-                {data: {id: 'auto', name: 'x:stack', shape: 'rectangle', bordercolor: 'color', parent: 'id-1'}}
-      1.1.2. malloc_block_node: store the string out of ()
-              create malloc_block_node(x)
-        
-  */
-  //auswerten der Daten
-  //bauen des elements Objects
-  //style property for CytoscapeComponent
+  
   const style = [
     {
       selector: "node",
@@ -153,20 +140,40 @@ const GraphCalculation = () => {
       },
     },
   ];
+
+  const layout = { name: "dagre" };
   
-  const layout = {name:'dagre'};
+  
+
 
   return (
     <div>
-      GraphCalculation
-      <div></div>
+      <button>Draw state</button>
       <CytoscapeComponent
-        elements={ elementsFlat }
+        elements={elementsFlat}
         stylesheet={style}
-        style={ { width: '600px', height: '600px' } }
-        layout = {layout}
+        style={{ width: "600px", height: "600px" }}
+        layout={layout}
       />
     </div>
   );
 };
 export default GraphCalculation;
+
+/* 
+Entwurf
+  1. malloc, stack oder node ?
+    1.1 malloc: malloc_block_stack oder malloc_block_node?
+      1.1.1 malloc_block_stack: store the string out of () in variable name
+              create malloc_block_stack(x)
+                generateNodeId() -> fortlaufend: const id = Date.now();
+                createNode(name)
+                {data: {id: 'auto', name: 'malloc_block_stack(x), shape: 'rectangle', bordercolor: 'color'}},
+                {data: {id: 'auto', name: 'x:stack', shape: 'rectangle', bordercolor: 'color', parent: 'id-1'}}
+      1.1.2. malloc_block_node: store the string out of ()
+              create malloc_block_node(x)
+        
+  */
+//auswerten der Daten
+//bauen des elements Objects
+//style property for CytoscapeComponent
