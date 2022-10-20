@@ -6,13 +6,15 @@ import Input from "../components/InputComponent/Input";
 import GraphCalculation from "../Components/GraphCalculation/GraphCalculation"
 
 
+
 export const DataContext = createContext();
 
 export default function Home({}) {
   
+  //data object, provided by React context for the other components to consume during runtime
   const [values, setValues] = useState({
-    textInput: "",
-    radioButtonColor: "",
+    textInput: "Heap Chunk",
+    radioButtonColor: "black",
   });
 
   return (
@@ -27,6 +29,7 @@ export default function Home({}) {
       </Head>
 
       <main className={styles.main}>
+        {/* Provider wraps the components that are to be supplied with the data object */}
         <DataContext.Provider value={{ values, setValues }}>
           <Input />
           <GraphCalculation />

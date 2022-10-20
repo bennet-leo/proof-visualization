@@ -2,13 +2,14 @@ import React, { useState, useContext  } from "react";
 import { DataContext } from "../../pages/index";
 
 
+
 const Input = () => {
   const { values, setValues } = useContext(DataContext);
   const [submitted, setSubmitted] = useState(false);
   const [valid, setValid] = useState(false);
   //updating the object and then saving it back to state object
   const handleTextInputChange = (event) => {
-    //event.persist();
+    event.persist();
     setValues((values) => ({
       ...values, //copy old vaues
       textInput: event.target.value,
@@ -16,7 +17,7 @@ const Input = () => {
   };
 
   const handleRadioButtonChange = (event) => {
-    //event.persist();
+    event.persist();
     setValues((values) => ({
       ...values, //copy old vaues
       radioButtonColor: event.target.value,
