@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import React, {useState, createContext} from "react";
-import Input from "../components/InputComponent/Input";
+import Input from "../Components/InputComponent/Input";
 import GraphCalculation from "../Components/GraphCalculation/GraphCalculation"
 
 
