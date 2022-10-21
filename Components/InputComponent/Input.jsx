@@ -3,11 +3,12 @@ import { DataContext } from "../../pages/index";
 import Output from "../Output/Output";
 
 const Input = () => {
-  let { values, setValues } = useContext(DataContext);
+  const [values, setValues] = useContext(DataContext);
   let [textInput, setTextInput] = useState("Heap Chunks");
   let [colorInput, setColorInput] = useState("black");
   const [submitted, setSubmitted] = useState(false);
   const [valid, setValid] = useState(false);
+  
 
   //change state of text input field while typing (letter by letter)
   const handleTextInputChange = (event) => {
@@ -21,28 +22,21 @@ const Input = () => {
   };
 
   const handleSubmit = (event) => {
-    event.persist();
+   
     event.preventDefault(); //will stop the refreshing of the page
-    //fill the values of dataContext state, to start graph calculation and rendering
-    setValues((values) => ({
+    //adding up the new values to values State in ReactContext
+    setValues(values => [
       ...values,
-      textInput: textInput,
-      radioButtonColor: colorInput,
-    }));
-    /* setValues((values) => ({
-      ...values, //copy old vaues
-      textInput: textInput,
-      radioButtonColor: colorInput
-    }));  */
-    
+      { textInput: textInput, radioButtonColor: colorInput }
+    ])
+
     //wenn Text input und Farbwahl getroffen, setze state auf valid und submitted
     if (values.textInput && values.radioButtonColor) {
       setValid(true);
     }
     setSubmitted(true);
   };
-
-  //console.log(`state: ${values.textInput}, ${values.radioButtonColor}`);
+ 
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -92,6 +86,9 @@ const Input = () => {
       )}
 
       <Output/>
+
+      
+
     </div>
   );
 };

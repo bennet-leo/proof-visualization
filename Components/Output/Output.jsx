@@ -3,10 +3,23 @@ import React, {useContext} from 'react'
 import { DataContext } from "../../pages/index";
 
 const Output = () => {
-    const { values, setValues } = useContext(DataContext);
+    const  [values] = useContext(DataContext);
   return (
     <div>
-        <div className={styles.textoutput}>{values.textInput}</div>
+        
+        {values.map(value => (
+        <div className={styles.textoutput}key={value.textInput} style={{padding:'10px'}}>
+          Movie Name:{' '}
+          <span style={{ color: 'red', fontStyle: 'italic' }}>
+            {value.textInput}
+          </span>{' '}
+          | Director Name{' '}
+          <span style={{ color: 'red', fontStyle: 'italic' }}>
+            {value.radioButtonColor}
+          </span>
+        </div>
+      ))}
+
     </div>
   )
 }

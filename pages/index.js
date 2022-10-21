@@ -12,10 +12,12 @@ export const DataContext = createContext();
 export default function Home({}) {
   
   //data object, provided by React context for the other components to consume during runtime
-  const [values, setValues] = useState({
-    textInput: '',
-    radioButtonColor: '',
-  });
+  const [values, setValues] = useState([
+    {
+      textInput: " ",
+      radioButtonColor: " "
+    }
+  ]);
 
   return (
     <div className={styles.container}>
@@ -30,7 +32,7 @@ export default function Home({}) {
 
       <main className={styles.main}>
         {/* Provider wraps the components that are to be supplied with the data object */}
-        <DataContext.Provider value={{ values, setValues }}>
+        <DataContext.Provider value={[values, setValues]}>
           <Input />
           <GraphCalculation />
         </DataContext.Provider>
