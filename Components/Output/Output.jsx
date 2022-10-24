@@ -6,20 +6,16 @@ const Output = () => {
     const  [values] = useContext(DataContext);
   return (
     <div>
-        
-        {values.map(value => (
+        {values.slice(1).map(value => (
         <div className={styles.textoutput}key={value.textInput} style={{padding:'10px'}}>
-          Movie Name:{' '}
-          <span style={{ color: 'red', fontStyle: 'italic' }}>
+          <span style={{ color: 'white', fontStyle: 'italic' }}>
             {value.textInput}
-          </span>{' '}
-          | Director Name{' '}
-          <span style={{ color: 'red', fontStyle: 'italic' }}>
+          </span>{' -> '}
+          <span style={{ color: 'white', fontStyle: 'italic' }}>
             {value.radioButtonColor}
           </span>
         </div>
       ))}
-
     </div>
   )
 }

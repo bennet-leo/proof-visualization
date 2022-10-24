@@ -78,7 +78,7 @@ const Input = () => {
 
         <button type="submit">submit row</button>
       </form>
-      {submitted && !values.radioButtonColor && (
+      {submitted && !colorInput && (
         <div>Please chose a color!</div>
       )}
       {valid && submitted && (

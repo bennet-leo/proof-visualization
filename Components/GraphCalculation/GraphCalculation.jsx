@@ -1,16 +1,35 @@
 import styles from "./graphCalculation.module.scss";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
 import { DataContext } from "../../pages";
-import cytoscape from "cytoscape";
-import dagre from "cytoscape-dagre";
 
-cytoscape.use(dagre);
+import Graph from "../Graph/Graph";
+import { generateRandomID } from "../../utils/generateID";
+
+
 
 const GraphCalculation = () => {
+  //holds the data points grouped by nodes and edges = not flattened
+  const elementsJSON = {
+    nodes: [],
+    edges: [],
+  };
+
+  //holds the graph data objects without nodes and edges grouping
+  //like so: {data: {id: 'one', name:'lala' ...}}, {data: {id: 'two, source: 'one', target: 'x'}}
+  const elementsFlat = [];
+
   //read values out of React Context
   const [values] = useContext(DataContext);
   
+  //state to update Cytoscape Component by Click on Button
+  const [graphData, setGraphData] = useState([]);
+
+
+  const handleClick = () => {
+    setGraphData([...fillElementsArray()]);
+  };
+
   //data object for intializing data for nodes to draw in graph
   const dataFactoryNodes = () => {
     return {
@@ -37,124 +56,141 @@ const GraphCalculation = () => {
     };
   };
 
-  const createMallocBlockStackGraphData = (name, color, elements) => {
+  //function to generate data points according to malloc_block_stack statement
+  const createMallocBlockStackGraphData = (name, color) => {
     //datapoints for outer rectangle
     const mallocstack = dataFactoryNodes();
-    mallocstack.data.id = "n1";
+    mallocstack.data.id = `${name}`;
     mallocstack.data.name = `malloc_block_stack(${name})`;
     mallocstack.data.shape = "rectangle";
     mallocstack.data.bordercolor = color;
 
     //datapoints for inner rectangle
     const stack = dataFactoryNodes();
-    stack.data.id = "n2";
+    stack.data.id = `${name}2`;
     stack.data.name = `${name}:stack`;
     stack.data.shape = "rectangle";
     stack.data.bordercolor = color;
-    stack.data.parent = "n1";
-    //push datapoints in an elements array with name nodes
-    elements.nodes.push(mallocstack);
-    elements.nodes.push(stack);
-  };
+    stack.data.parent = `${name}`;
 
-  const createMallocBlockNodeGraphData = (name, color, elements) => {
+    //push resulting datapoints in elements array in property nodes
+    elementsJSON.nodes.push(mallocstack);
+    elementsJSON.nodes.push(stack);
+  };
+  
+   //function to generate data points according to malloc_block_node statement
+  const createMallocBlockNodeGraphData = (name, color) => {
+     //datapoints for outer rectangle
     const mallocNode = dataFactoryNodes();
-    mallocNode.data.id = "n3";
+    mallocNode.data.id = `${name}`;
     mallocNode.data.name = `malloc_block_node(${name})`;
     mallocNode.data.shape = "rectangle";
     mallocNode.data.bordercolor = color;
 
-    const node = dataFactoryNodes();
-    node.data.id = "n4";
-    node.data.name = `${name}:node`;
-    node.data.shape = "rectangle";
-    node.data.bordercolor = color;
-    node.data.parent = "n3";
+    //datapoints for inner rectangle
+    const mNode = dataFactoryNodes();
+    mNode.data.id = `${name}2`;
+    mNode.data.name = `${name}:node`;
+    mNode.data.shape = "rectangle";
+    mNode.data.bordercolor = color;
+    mNode.data.parent = `${name}`;
 
-    elements.nodes.push(mallocNode);
-    elements.nodes.push(node);
+    //push resulting datapoints in elements array in property nodes
+    elementsJSON.nodes.push(mallocNode);
+    elementsJSON.nodes.push(mNode);
   };
 
+  const createNodeValue = (nodename, valuename, color) => {
+    
+     //datapoints for outer rectangle
+    const node = dataFactoryNodes();
+    node.data.id = `${nodename}`;
+    node.data.name = `${nodename}:node`;
+    node.data.shape = "rectangle";
+    node.data.bordercolor = color;
+
+    //datapoints for inner rectangle
+    const nodevalue = dataFactoryNodes();
+    nodevalue.data.id = `${nodename}2`;
+    nodevalue.data.name = `${valuename}:value`;
+    nodevalue.data.shape = "rectangle";
+    nodevalue.data.bordercolor = color;
+    nodevalue.data.parent = `${nodename}`;
+
+    //push resulting datapoints in elements array in property nodes
+    elementsJSON.nodes.push(node);
+    elementsJSON.nodes.push(nodevalue);
+  }
+
+  const createNodeNextEdge = (source, target, color) => {
+    const sourceNodeNextPointer = dataFactoryNodes();
+    sourceNodeNextPointer.data.id = `${source}_next`; 
+    sourceNodeNextPointer.data.name = "next";
+    sourceNodeNextPointer.data.shape = "ellipse";
+    sourceNodeNextPointer.data.bordercolor = color;
+    sourceNodeNextPointer.data.parent = `${source}`
+
+    const targetNode = dataFactoryNodes();
+    targetNode.data.id = `${target}`;
+    targetNode.data.name = `${target}`;
+    targetNode.data.shape = "rectangle";
+    targetNode.data.bordercolor = color;
+    
+    const nextEdge = dataFactoryEdges();
+    nextEdge.data.id = `${source}:${target}`;
+    nextEdge.data.name = 'next';
+    nextEdge.data.source = `${source}_next`;
+    nextEdge.data.target = `${target}`
+    nextEdge.data.color = color;
+
+    //push resulting datapoints in elements array in property nodes
+    elementsJSON.nodes.push(sourceNodeNextPointer);
+    elementsJSON.edges.push(nextEdge);
+    elementsJSON.nodes.push(targetNode);
+  }
+
   //pull out entered name of heap chunk by the user to later determine label in graph and call create-Function to satisfy the different types of heap chunks
-  const checkTypeOfHeapChunk = (value, elements) => {
+  const checkTypeOfHeapChunk = (value) => {
     if (value.textInput.startsWith("malloc_block_stack")) {
       const name = value.textInput.substring(19, 20);
       const color = value.radioButtonColor;
-      createMallocBlockStackGraphData(name, color, elements);
+      createMallocBlockStackGraphData(name, color);
     } else if (value.textInput.startsWith("malloc_block_node")) {
-      const name = text.substring(18, 19);
+      const name = value.textInput.substring(18, 19);
       const color = value.radioButtonColor;
-      createMallocBlockNodeGraphData(name, color, elements);
+      createMallocBlockNodeGraphData(name, color);
+    } else if (value.textInput.startsWith("node_value")) {
+      const nodename = value.textInput.substring(11, 12);
+      const valuename = value.textInput.substring(13, 14);
+      const color = value.radioButtonColor;
+      createNodeValue(nodename, valuename, color);
+    } else if (value.textInput.startsWith("node_next")) {
+      const source = value.textInput.substring(10,11);
+      const target = value.textInput.substring(12,13);
+      const color = value.radioButtonColor;
+      createNodeNextEdge(source, target, color);
+
     }
-    //else if textinput startswith malloc_block_node
-    //else if textinput starts with node
-    //else if textinput starts with stack
+   
+    //else if textinput starts with stack_head
   };
 
-  const style = [
-    {
-      selector: "node",
-      css: {
-        content: "data(name)",
-        "text-valign": "center",
-        "text-halign": "center",
-        shape: "data(shape)",
-        "border-color": "data(bordercolor)",
-        "border-width": "3",
-        padding: "20",
-      },
-    },
-    {
-      selector: ":parent",
-      css: {
-        "text-valign": "top",
-        "text-halign": "center",
-      },
-    },
-    {
-      selector: "edge",
-      css: {
-        content: "data(name)",
-        "text-margin-y": -17,
-        "curve-style": "bezier",
-        "target-arrow-shape": "triangle",
-        "line-color": "data(color)",
-      },
-    },
-  ];
+  const fillElementsArray = () => {
+    values.map((value) => checkTypeOfHeapChunk(value));
 
-  const layout = { name: "dagre" };
-  const elementsForGraphArray = [];
-  const drawGraph = () => {
-    //holds the graph data objects without nodes and edges grouping
-    //like so: {data: {id: 'one', name:'lala' ...}}, {data: {id: 'two, source: 'one', target: 'x'}}
-    const elementsFlat = [];
+    //flaten the array and push nodes and edges in elementsFlat
+    elementsJSON.nodes.forEach((x) => elementsFlat.push(x));
+    elementsJSON.edges.forEach((x) => elementsFlat.push(x));
 
-    //holds the data points grouped by nodes and edges = not flattened
-    const elements = {
-      nodes: [],
-      edges: [],
-    };
-    values.map((value) => checkTypeOfHeapChunk(value, elements));
-
-    //when clicked flaten the array and push in elementsFlat
-    elements.nodes.forEach((x) => elementsFlat.push(x));
-
-    //pass to global Array variable
-    elementsForGraphArray = elementsFlat;
-    console.log(elementsForGraphArray);
+    //return the final Array with all data objects
+    return elementsFlat;
   };
   //Problem vermutlich: Cytoscape Component wird nicht neu gerendert wenn Button "Draw State" geklickt wird. values state ändert sich auch vorher schon aber ich will, dass der state mit mehreren Zeilen/ items gefüllt werden kann und erst processed und gerendert wird, wenn draw state gedrückt wird -> vielleicht einen internen state
+
   return (
     <div>
-      <button onClick={drawGraph}>Draw state</button>
-
-      <CytoscapeComponent
-        elements={elementsForGraphArray}
-        stylesheet={style}
-        style={{ width: "600px", height: "600px" }}
-        layout={layout}
-      />
+      <button onClick={handleClick}>Draw state</button>
+      <Graph elements={graphData} />
     </div>
   );
 };

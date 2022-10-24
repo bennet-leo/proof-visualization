@@ -6,7 +6,6 @@ import Input from "../Components/InputComponent/Input";
 import GraphCalculation from "../Components/GraphCalculation/GraphCalculation"
 
 
-
 export const DataContext = createContext();
 
 export default function Home({}) {
@@ -14,10 +13,12 @@ export default function Home({}) {
   //data object, provided by React context for the other components to consume during runtime
   const [values, setValues] = useState([
     {
-      textInput: " ",
-      radioButtonColor: " "
+      textInput: "Heap Chunks allready entered",
+      radioButtonColor: "Color of the textline"
     }
   ]);
+  
+
 
   return (
     <div className={styles.container}>
