@@ -3,7 +3,6 @@ import React, { useContext, useState } from "react";
 import { DataContext } from "../../pages";
 import Graph from "../Graph/Graph";
 
-
 const GraphCalculation = () => {
   //holds the data points grouped by nodes and edges = not flattened
   const elementsJSON = {
@@ -20,8 +19,6 @@ const GraphCalculation = () => {
 
   //state to update Cytoscape Component by Click on Button
   const [graphData, setGraphData] = useState([]);
-
-  
 
   const handleClick = () => {
     setGraphData([...fillElementsArray()]);
@@ -104,7 +101,6 @@ const GraphCalculation = () => {
     node.data.name = `${nodename}:node`;
     node.data.shape = "rectangle";
     node.data.bordercolor = color;
-    
 
     //datapoints for inner rectangle
     const nodevalue = dataFactoryNodes();
@@ -145,24 +141,24 @@ const GraphCalculation = () => {
     elementsJSON.edges.push(nextEdge);
     elementsJSON.nodes.push(targetNode);
   };
-  
+
   const createStackHeadEdge = (source, target, color) => {
     const sourceNodeHeadPointer = dataFactoryNodes();
     sourceNodeHeadPointer.data.id = `${source}:head_ellipse`;
-    sourceNodeHeadPointer.data.name = 'head';
-    sourceNodeHeadPointer.data.shape = 'ellipse';
+    sourceNodeHeadPointer.data.name = "head";
+    sourceNodeHeadPointer.data.shape = "ellipse";
     sourceNodeHeadPointer.data.bordercolor = color;
     sourceNodeHeadPointer.data.parent = `s:stack`;
 
     const targetNode = dataFactoryNodes();
     targetNode.data.id = `${target}:node`;
     targetNode.data.name = `${target}:node`;
-    targetNode.data.shape = 'rectangle';
+    targetNode.data.shape = "rectangle";
     targetNode.data.bordercolor = color;
 
     const headPointer = dataFactoryEdges();
     headPointer.data.id = `${source}_head:pointer`;
-    headPointer.data.name = 'head';
+    headPointer.data.name = "head";
     headPointer.data.source = `${source}:head_ellipse`;
     headPointer.data.target = `${target}:node`;
 
@@ -170,38 +166,43 @@ const GraphCalculation = () => {
     elementsJSON.nodes.push(sourceNodeHeadPointer);
     elementsJSON.edges.push(headPointer);
     elementsJSON.nodes.push(targetNode);
-  }
-
+  };
 
   //pull out entered name of heap chunk by the user to later determine label in graph and call create-Function to satisfy the different types of heap chunks
   const checkTypeOfHeapChunk = (value) => {
     if (value.textInput.startsWith("malloc_block_stack")) {
-        const name = (value.textInput).match(/\((.*)\)/).pop();
-        const color = value.radioButtonColor;
-        createMallocBlockStackGraphData(name, color);
+      const name = value.textInput.match(/\((.*)\)/).pop();
+      const color = value.radioButtonColor;
+      createMallocBlockStackGraphData(name, color);
     } else if (value.textInput.startsWith("malloc_block_node")) {
-        const name = (value.textInput).match(/\((.*)\)/).pop();
-        const color = value.radioButtonColor;
-        createMallocBlockNodeGraphData(name, color);
+      const name = value.textInput.match(/\((.*)\)/).pop();
+      const color = value.radioButtonColor;
+      createMallocBlockNodeGraphData(name, color);
     } else if (value.textInput.startsWith("node_value")) {
-        const matches = value.textInput.match(/\(([^)]+)\)/)[1].split(", ");
-        console.log(matches[0]);
-        const nodename = matches[0];
-        const valuename = matches[1];
-        const color = value.radioButtonColor;
-        createNodeValue(nodename, valuename, color);
+      const matches = value.textInput
+        .match(/\(([^)]+)\)/)[1]
+        .split(", ");
+      console.log(matches[0]);
+      const nodename = matches[0];
+      const valuename = matches[1];
+      const color = value.radioButtonColor;
+      createNodeValue(nodename, valuename, color);
     } else if (value.textInput.startsWith("node_next")) {
-        const matches = value.textInput.match(/\(([^)]+)\)/)[1].split(", ");
-        const source = matches[0];
-        const target = matches[1];
-        const color = value.radioButtonColor;
-        createNodeNextEdge(source, target, color);
-    } else if (value.textInput.startsWith("stack_head"))  {
-        const matches = value.textInput.match(/\(([^)]+)\)/)[1].split(", ");
-        const source = matches[0];
-        const target = matches[1];
-        const color = value.radioButtonColor;
-        createStackHeadEdge(source, target, color);
+      const matches = value.textInput
+        .match(/\(([^)]+)\)/)[1]
+        .split(", ");
+      const source = matches[0];
+      const target = matches[1];
+      const color = value.radioButtonColor;
+      createNodeNextEdge(source, target, color);
+    } else if (value.textInput.startsWith("stack_head")) {
+      const matches = value.textInput
+        .match(/\(([^)]+)\)/)[1]
+        .split(", ");
+      const source = matches[0];
+      const target = matches[1];
+      const color = value.radioButtonColor;
+      createStackHeadEdge(source, target, color);
     }
 
     //else if textinput starts with stack_head
@@ -217,7 +218,6 @@ const GraphCalculation = () => {
     //return the final Array with all data objects
     return elementsFlat;
   };
-  //Problem vermutlich: Cytoscape Component wird nicht neu gerendert wenn Button "Draw State" geklickt wird. values state ändert sich auch vorher schon aber ich will, dass der state mit mehreren Zeilen/ items gefüllt werden kann und erst processed und gerendert wird, wenn draw state gedrückt wird -> vielleicht einen internen state
 
   return (
     <div>
@@ -227,21 +227,3 @@ const GraphCalculation = () => {
   );
 };
 export default GraphCalculation;
-
-/* 
-Entwurf
-  1. malloc, stack oder node ?
-    1.1 malloc: malloc_block_stack oder malloc_block_node?
-      1.1.1 malloc_block_stack: store the string out of () in variable name
-              create malloc_block_stack(x)
-                generateNodeId() -> fortlaufend: const id = Date.now();
-                createNode(name)
-                {data: {id: 'auto', name: 'malloc_block_stack(x), shape: 'rectangle', bordercolor: 'color'}},
-                {data: {id: 'auto', name: 'x:stack', shape: 'rectangle', bordercolor: 'color', parent: 'id-1'}}
-      1.1.2. malloc_block_node: store the string out of ()
-              create malloc_block_node(x)
-        
-  */
-//auswerten der Daten
-//bauen des elements Objects
-//style property for CytoscapeComponent
