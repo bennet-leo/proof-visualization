@@ -8,7 +8,6 @@ const Input = () => {
   let [colorInput, setColorInput] = useState("black");
   const [submitted, setSubmitted] = useState(false);
   const [valid, setValid] = useState(false);
-  
 
   //change state of text input field while typing (letter by letter)
   const handleTextInputChange = (event) => {
@@ -22,13 +21,12 @@ const Input = () => {
   };
 
   const handleSubmit = (event) => {
-   
     event.preventDefault(); //will stop the refreshing of the page
     //adding up the new values to values State in ReactContext
-    setValues(values => [
+    setValues((values) => [
       ...values,
-      { textInput: textInput, radioButtonColor: colorInput }
-    ])
+      { textInput: textInput, radioButtonColor: colorInput },
+    ]);
 
     //wenn Text input und Farbwahl getroffen, setze state auf valid und submitted
     if (values.textInput && values.radioButtonColor) {
@@ -36,7 +34,7 @@ const Input = () => {
     }
     setSubmitted(true);
   };
- 
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -78,17 +76,12 @@ const Input = () => {
 
         <button type="submit">submit row</button>
       </form>
-      {submitted && !colorInput && (
-        <div>Please chose a color!</div>
-      )}
+      {submitted && !colorInput && <div>Please chose a color!</div>}
       {valid && submitted && (
         <div>Success! Thank you for registering</div>
       )}
 
-      <Output/>
-
-      
-
+      <Output />
     </div>
   );
 };
