@@ -1,25 +1,10 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
-import React, {useState, createContext} from "react";
-import Input from "../Components/InputComponent/Input";
-import GraphCalculation from "../Components/GraphCalculation/GraphCalculation"
-
-
-export const DataContext = createContext();
+import React from "react";
+import Link from "next/link";
 
 export default function Home({}) {
-  
-  //data object, provided by React context for the other components to consume during runtime
-  const [values, setValues] = useState([
-    {
-      textInput: "Heap Chunks allready entered",
-      radioButtonColor: "Color of the textline"
-    }
-  ]);
-  
-
-
   return (
     <div className={styles.container}>
       <Head>
@@ -32,12 +17,13 @@ export default function Home({}) {
       </Head>
 
       <main className={styles.main}>
-        {/* Provider wraps the components that are to be supplied with the data object */}
-        <DataContext.Provider value={[values, setValues]}>
-          <Input />
-          <GraphCalculation />
-        </DataContext.Provider>
-        
+        <h1>Landing Page</h1>
+        <Link href="/successor">
+          <a>Successor</a>
+        </Link>
+        <Link href="/graph">
+          <a>Graph</a>
+        </Link>
       </main>
 
       <footer className={styles.footer}>

@@ -1,6 +1,6 @@
 import styles from "./output.module.scss"
 import React, {useContext} from 'react'
-import { DataContext } from "../../pages/index";
+import { DataContext } from "../../pages/graph";
 
 const Output = () => {
     const  [values] = useContext(DataContext);

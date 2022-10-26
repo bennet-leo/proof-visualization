@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { DataContext } from "../../pages/index";
+import { DataContext } from "../../pages/graph";
 import Output from "../Output/Output";
 
 const Input = () => {
@@ -29,7 +29,7 @@ const Input = () => {
     ]);
 
     //wenn Text input und Farbwahl getroffen, setze state auf valid und submitted
-    if (values.textInput && values.radioButtonColor) {
+    if (textInput && colorInput) {
       setValid(true);
     }
     setSubmitted(true);

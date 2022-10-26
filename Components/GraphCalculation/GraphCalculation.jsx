@@ -1,6 +1,6 @@
 import styles from "./graphCalculation.module.scss";
 import React, { useContext, useState } from "react";
-import { DataContext } from "../../pages";
+import { DataContext } from "../../pages/graph";
 import Graph from "../Graph/Graph";
 
 const GraphCalculation = () => {
@@ -203,6 +203,8 @@ const GraphCalculation = () => {
       const target = matches[1];
       const color = value.radioButtonColor;
       createStackHeadEdge(source, target, color);
+    } else {
+        //noMatchingHeapChunk();
     }
 
     //else if textinput starts with stack_head
