@@ -2,8 +2,21 @@ import * as React from 'react';
 import * as d3 from "d3";
 import cookieCutter from 'cookie-cutter';
 
-async function processDataTable(Cookiename){
+async function processDataTable(Cookiename_input){
 
+    let cookienames;
+    cookienames= [];
+    if(Cookiename_input !="Gesamtdarstellung"){
+        cookienames.push(Cookiename_input);
+    }else{
+        cookienames.push("1");
+        cookienames.push("2");
+        cookienames.push("3");
+        cookienames.push("4");
+        cookienames.push("5");
+    }
+
+        
 
     let daten ={
         a:'undefined',
@@ -19,6 +32,13 @@ async function processDataTable(Cookiename){
 
     let gaps;
     gaps= [] ;
+    
+    let dataTable;
+    dataTable = {
+        table: []
+    }; 
+
+    cookienames.forEach(Cookiename => {
     let data;
     var cookie = cookieCutter;
     try{
@@ -33,18 +53,33 @@ async function processDataTable(Cookiename){
     data = cookie.get(Cookiename);
     }else{
         // return 0;
-    }
-    let dataTable;
-    dataTable = {
-        table: []
-    };    
+    }   
     if(data!=='{}'&&typeof Cookiename!=='undefined'){
-        dataTable = JSON.parse(data); 
+        if(typeof(dataTable)==='undefined'){
+            dataTable = JSON.parse(data);
+        }else{
+            let loc_table;
+            loc_table = {
+                table: []
+            }; 
+            
+            loc_table = JSON.parse(data);
+            // console.log(loc_table.table);
+            for (let i = 0; i < loc_table.table.length; i++) {
+                const element = loc_table.table[i];
+                console.log("element "+element);
+                dataTable.table.push(element);
+            }
+        }
     }else{
         return 0;
     }
+
+});
     let localTable = dataTable;
     var length = localTable.table.length;
+    // console.log("Name: " + Cookiename_input + " länge: " + localTable.table.length);
+    // console.log(localTable);
     let loopcount =0;
     daten.topBorder = 'max';
     daten.bottomBorder = 'min';
@@ -124,6 +159,8 @@ async function processDataTable(Cookiename){
     if(daten.bottomBorder>daten.topBorder){
         daten.nichtDefiniert = true;
     }
+
+    
   return daten;
 }
 
