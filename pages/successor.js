@@ -115,21 +115,6 @@ const Successor = () => {
       <div><Zahlenstrahl name={Zahlenstrahl_gesamt_name} /></div>
     <div>Definitionsbereich von a</div>
     <div>
-      <label>a </label>
-      <select id = {"operator"+Zahlenstrahl_gesamt_name}>
-        <option defaultValue>&#62;</option>
-        <option>&#8805;</option>
-        <option>&#60;</option>
-        <option>&#8804;</option>
-        <option>=</option>
-        <option>!=</option>
-      </select>
-      <input type="text" id={"value"+Zahlenstrahl_gesamt_name}onClick={() => clear(Zahlenstrahl_gesamt_name)} />
-    </div>
-    <div>
-      <button onClick={() => dataToJson(Zahlenstrahl_gesamt_name)} >Hinzufügen</button>
-      <button onClick={() => reset(Zahlenstrahl_gesamt_name)} >Reset</button>
-      <button onClick={() => showData(Zahlenstrahl_gesamt_name)} >Daten anzeigen</button>
       <button onClick={() => Vis(Zahlenstrahl_gesamt_name)} >Visualiserung anzeigen</button>     
     </div>
     </div>
