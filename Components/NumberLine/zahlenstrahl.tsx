@@ -4,6 +4,31 @@ import cookieCutter from 'cookie-cutter';
 
 async function processDataTable(Cookiename_input){
 
+    let daten ={
+        a:'undefined',
+        topBorder :'undefined',
+        bottomBorder :'undefined',
+        aGefunden : false,
+        includingBottom : false,
+        includingTop : false,
+        includingGaps : false,
+        nichtDefiniert : false,
+        gaps : [],
+        lowestValue :'undefined',
+        biggestValue : 'undefined'
+    }
+
+    let gesamt = daten;
+    console.log(Cookiename_input);
+    if( Cookiename_input!="Gesamtdarstellung")
+    {
+    //    let gesamt_darstellung;
+       let tabledata = processDataTable("Gesamtdarstellung");
+            gesamt = await tabledata.then();
+       console.log(gesamt)
+       console.log(gesamt.biggestValue + " " + gesamt.lowestValue)
+    }
+    
     let cookienames;
     cookienames= [];
     if(Cookiename_input !="Gesamtdarstellung"){
@@ -17,19 +42,6 @@ async function processDataTable(Cookiename_input){
     }
 
         
-
-    let daten ={
-        a:'undefined',
-        topBorder :'undefined',
-        bottomBorder :'undefined',
-        aGefunden : false,
-        includingBottom : false,
-        includingTop : false,
-        includingGaps : false,
-        nichtDefiniert : false,
-        gaps : []
-    }
-
     let gaps;
     gaps= [] ;
     
@@ -37,6 +49,7 @@ async function processDataTable(Cookiename_input){
     dataTable = {
         table: []
     }; 
+    let topmostborder , bottommostborder;
 
     cookienames.forEach(Cookiename => {
     let data;
@@ -94,8 +107,12 @@ async function processDataTable(Cookiename_input){
         }else{
             let value;
             value = parseInt(content.val,10)
-            let rawData;
-            rawData = content.val;
+            if(value>daten.biggestValue || typeof daten.biggestValue ==='undefined'){
+                daten.biggestValue = value;
+            }
+            if(value < daten.lowestValue || typeof daten.lowestValue === 'undefined'){
+                daten.lowestValue = value;
+            }
             switch (content.op) {
             case '<':
                 //Wenn in topBorder 'min' steht, oder der gegenwärtige Wert kleiner, 
@@ -155,6 +172,7 @@ async function processDataTable(Cookiename_input){
             }
         }
     }
+
     daten.gaps=gaps;
     if(daten.bottomBorder>daten.topBorder){
         daten.nichtDefiniert = true;
@@ -176,7 +194,9 @@ async function drawSvg(svgRef: React.RefObject<SVGSVGElement>,name) {
                 includingTop : false,
                 includingGaps : false,
                 nichtDefiniert : false,
-                gaps : []
+                gaps : [],
+                lowestValue :'undefined',
+                biggestValue : 'undefined'
             } 
 
             let tabledata = processDataTable(name);
@@ -193,8 +213,13 @@ async function drawSvg(svgRef: React.RefObject<SVGSVGElement>,name) {
             let gaps ;//
             gaps= [] ;
             gaps = datenStruct.gaps;
-
-
+            let lowestValue = datenStruct.lowestValue;
+            let biggestValue = datenStruct.biggestValue;
+//Mit dem lowestValue und dem highestvalue kann 
+//man theoretisch die Grenzen für die Grafik setzen
+//funktioniert allerdings so nicht, da die Logik für die 
+//Grafikerstelung und die Berechnung der Grafikelemente selbst zu eng miteinander
+//verwoben sind.
             let Cookiename = name;
             const h = 60;
             const w = 600;
